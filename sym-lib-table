@@ -1,3 +1,3 @@
 (sym_lib_table
-  (lib (name "gowin_fpga")(type "Legacy")(uri "${KIPRJMOD}/gowin_fpga.lib")(options "")(descr ""))
+  (lib (name "gowin_fpga")(type "KiCad")(uri "${KIPRJMOD}/gowin_fpga.kicad_sym")(options "")(descr ""))
 )

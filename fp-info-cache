@@ -1,4 +1,4 @@
-20328437136154270
+20333422867204042
 Audio_Module
 Reverb_BTDR-1H
 Digital Reverberation Unit, http://www.belton.co.kr/inc/downfile.php?seq=17&file=pdf (footprint from http://www.uk-electronic.de/PDF/BTDR-1.pdf)
@@ -50316,6 +50316,13 @@ SMD SMT ceramic resonator filter filter hand-soldering
 3
 3
 Custom
+52991-0408
+
+
+0
+40
+40
+Custom
 BM20B(0.8)-40DP-0.4V(53)
 
 
@@ -50358,6 +50365,13 @@ MMCX_Molex_73415-2063_Vertical
 3
 2
 Custom
+MUN3CAD01
+
+
+0
+6
+6
+Custom
 Molex_0731000133
 
 
@@ -50371,6 +50385,13 @@ QFN-16_1.8x2.6_Pitch0.4mm
 0
 16
 16
+Custom
+QFN-88_EP_10x10_Pitch0.4mm
+
+
+0
+89
+89
 Custom
 QTH-030-XX-X-D-A
 HIGH SPEED TERMINAL STRIP, .5mm PITCH, 60 PINS.MANUFACTURER:SAMTEC.
