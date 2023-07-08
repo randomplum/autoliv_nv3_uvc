@@ -15,4 +15,4 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-void patch_usb_serial_number_with_eeprom_macaddress();
+void patch_usb_serial_number_with_eeprom_macaddress(void);

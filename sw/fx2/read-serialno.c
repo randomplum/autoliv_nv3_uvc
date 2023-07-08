@@ -40,7 +40,7 @@ void patch_serial_number(BYTE index, BYTE value) {
 #define PROM_ID_SIZE 8
 
 // Patch the USB serial number with information from the MAC address EEPROM.
-void patch_usb_serial_number_with_eeprom_macaddress() {
+void patch_usb_serial_number_with_eeprom_macaddress(void) {
 	BYTE tempbyte = 0;
 	BYTE i = 0;
 

@@ -30,11 +30,11 @@ volatile __bit dosud=FALSE;
 volatile __bit dosuspend=FALSE;
 
 // custom functions
-extern void main_loop();
-extern void main_init();
+extern void main_loop(void);
+extern void main_init(void);
 
 
-void main() {
+void main(void) {
 
  main_init();
 
@@ -101,30 +101,30 @@ void main() {
 
 } // end main
 
-void resume_isr() __interrupt RESUME_ISR {
+void resume_isr(void) __interrupt (RESUME_ISR) {
  CLEAR_RESUME();
 }
 
-void sudav_isr() __interrupt SUDAV_ISR {
+void sudav_isr(void) __interrupt (SUDAV_ISR) {
  dosud=TRUE;
  CLEAR_SUDAV();
 }
-void usbreset_isr() __interrupt USBRESET_ISR {
+void usbreset_isr(void) __interrupt (USBRESET_ISR) {
  handle_hispeed(FALSE);
  CLEAR_USBRESET();
 }
-void hispeed_isr() __interrupt HISPEED_ISR {
+void hispeed_isr(void) __interrupt (HISPEED_ISR) {
  handle_hispeed(TRUE);
  CLEAR_HISPEED();
 }
 
-void suspend_isr() __interrupt SUSPEND_ISR {
+void suspend_isr(void) __interrupt (SUSPEND_ISR) {
  dosuspend=TRUE;
  CLEAR_SUSPEND();
 }
 
 
-void ISR_USART0(void) __interrupt 4 __critical {
+void ISR_USART0(void) __interrupt (TI_0_ISR) __critical {
 
 }
 
