@@ -88,7 +88,7 @@ _highspd_dscr:
 	.db    DSCR_CONFIG_TYPE               ; bDescriptorType
 	.db    <(highspd_dscr_realend - _highspd_dscr) ;; Total Length (LSB)
 	.db    >(highspd_dscr_realend - _highspd_dscr) ;; Total Length (MSB)
-	.db    4                              ; bNumInterfaces
+	.db    2                              ; bNumInterfaces
 	.db    1                              ; bConfigurationValue
 	.db    0                              ; iConfiguration (string index)
 	.db    0x80                           ; bmAttributes (bus powered, no wakeup)
@@ -199,7 +199,7 @@ vsheader:
         .db 0x02                         ;/* 2 format descriptor follows */
         .db <(vsheaderend-vsheader)      ;; Total Length (LSB)
         .db >(vsheaderend-vsheader)      ;; Total Length (MSB)
-        .db 0x86                         ;/* EP address for BULK video data */
+        .db 0x82                         ;/* EP address for BULK video data */
         .db 0x00                         ;/* No dynamic format change supported */
         .db 0x04                         ;/* Output terminal ID : 4 */
         .db 0x01                         ;/* Still image capture method 1 supported */
@@ -209,60 +209,6 @@ vsheader:
         .db 0x00                         ;/* D2 : Compression quality supported */
         .db 0x00                         ;/* D2 : Compression quality supported */
 
-        ;;;;;;;;;;;;;; MJPEG ;;;;;;;;;;;;;
-
-        ;/* Class specific VS format descriptor */
-        .db 0x0B                         ;/* Descriptor size */
-        .db 0x24                         ;/* Class-specific VS i/f type */
-        .db 0x06                         ;/* Descriptor subtype : VS_FORMAT_MJPEG */
-        .db 0x01                         ;/* Format descriptor index */
-        .db 0x02                         ;/* 2 Frame descriptor follows */
-        .db 0x01                         ;/* Uses fixed size samples */
-        .db 0x01                         ;/* Default frame index is 1 */
-        .db 0x00                         ;/* Non interlaced stream not reqd. */
-        .db 0x00                         ;/* Non interlaced stream not reqd. */
-        .db 0x00                         ;/* Non interlaced stream */
-        .db 0x00                         ;/* CopyProtect: duplication unrestricted */
-
-        ;/* Class specific VS frame descriptor */       1
-        .db 0x1E                         ;/* Descriptor size */
-        .db 0x24                         ;/* Class-specific VS I/f Type */
-        .db 0x07                         ;/* Descriptor subtype : VS_FRAME_MJPEG */
-        .db 0x01                         ;/* Frame descriptor index */
-        .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x04                    ;/* Width of the frame : 1024 */
-        .db 0x00,0x03                    ;/* Height of the frame : 768 */
-        .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
-        .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
-        .db 0x00,0x00,0x18,0x00          ;/* Maximum video or still frame size in bytes */
-        .db 0x2A,0x2C,0x0A,0x00          ;/* Default frame interval */
-        .db 0x01                         ;/* Frame interval type : No of discrete intervals */
-        .db 0x2A,0x2C,0x0A,0x00          ;/* Frame interval 1 */
-
-        ;/* Class specific VS frame descriptor */       2
-        .db 0x1E                         ;/* Descriptor size */
-        .db 0x24                         ;/* Class-specific VS I/f Type */
-        .db 0x07                         ;/* Descriptor subtype : VS_FRAME_MJPEG */
-        .db 0x02                         ;/* Frame descriptor index */
-        .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x05                    ;/* Width of the frame : 1280 */
-        .db 0xD0,0x02                    ;/* Height of the frame : 720 */
-        .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
-        .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
-        .db 0x00,0x20,0x1C,0x00          ;/* Maximum video or still frame size in bytes */
-        .db 0x2A,0x2C,0x0A,0x00          ;/* Default frame interval */
-        .db 0x01                         ;/* Frame interval type : No of discrete intervals */
-        .db 0x2A,0x2C,0x0A,0x00          ;/* Frame interval 1 */
-
-
-        ; VS Color Matching Descriptor Descriptor
-        .db 0x06                         ; (6 bytes)
-        .db 0x24                         ; (Video Streaming Interface)
-        .db 0x0D                         ; (Color Matching)
-        .db 0x01                         ; (BT.709, sRGB)
-        .db 0x01                         ; (BT.709)
-        .db 0x04                         ; (SMPTE 170M)
-
 
         ;;;;;;;;;;;;;;;;;;;; YUY2 ;;;;;;;;;;;;;;;;;;;;;;;;
 
@@ -271,12 +217,12 @@ vsheader:
         .db 0x24                         ; /* Class-specific VS I/f Type */
         .db 0x04                         ; /* Subtype : uncompressed format I/F */
         .db 0x02                         ; /* Format descriptor index (only one format is supported) */
-        .db 0x02                         ; /* number of frame descriptor followed */
+        .db 0x01                         ; /* number of frame descriptor followed */
         .db 0x59,0x55,0x59,0x32          ; /* GUID, globally unique identifier used to identify streaming-encoding format: YUY2  */
         .db 0x00,0x00,0x10,0x00
         .db 0x80,0x00,0x00,0xAA
         .db 0x00,0x38,0x9B,0x71
-        .db 0x10                         ;/* Number of bits per pixel used to specify color in the decoded video frame. 0 if not applicable: 10 bit per pixel */
+        .db 0x10                         ;/* Number of bits per pixel used to specify color in the decoded video frame. 0 if not applicable: 16 bit per pixel */
         .db 0x01                         ;/* Optimum Frame Index for this stream: 1 */
         .db 0x00                         ;/* X dimension of the picture aspect ratio: Non-interlaced in progressive scan */
         .db 0x00                         ;/* Y dimension of the picture aspect ratio: Non-interlaced in progressive scan*/
@@ -289,30 +235,14 @@ vsheader:
         .db 0x05                         ;/* Descriptor subtype uncompressed frame I/F  */
         .db 0x01                         ;/* Frame descriptor index */
         .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x04                    ;/* Width of the frame : 1024 */
-        .db 0x00,0x03                    ;/* Height of the frame : 768 */
+        .db 0x00,0x02                    ;/* Width of the frame : 512 */
+        .db 0x00,0x02                    ;/* Height of the frame : 512 */
         .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
         .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
         .db 0x00,0x00,0x18,0x00          ;/* Maximum video or still frame size in bytes */
-        .db 0x54,0x58,0x14,0x00          ;/* Default frame interval */
+        .db 0x0B,0x8B,0x02,0x00          ;/* Default frame interval */
         .db 0x01                         ;/* Frame interval type : No of discrete intervals */
-        .db 0x54,0x58,0x14,0x00          ;/* Frame interval 3 */
-
-
-        ; Frame descriptors 2
-        .db 0x1E                         ;/* Descriptor size */
-        .db 0x24                         ;/* Class-specific VS I/f Type */
-        .db 0x05                         ;/* Descriptor subtype uncompressed frame I/F  */
-        .db 0x02                         ;/* Frame descriptor index */
-        .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x05                    ;/* Width of the frame : 1280 */
-        .db 0xD0,0x02                    ;/* Height of the frame : 720 */
-        .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
-        .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
-        .db 0x00,0x20,0x1C,0x00          ;/* Maximum video or still frame size in bytes */
-        .db 0x54,0x58,0x14,0x00          ;/* Default frame interval */
-        .db 0x01                         ;/* Frame interval type : No of discrete intervals */
-        .db 0x54,0x58,0x14,0x00          ;/* Frame interval 3 */
+        .db 0x0B,0x8B,0x02,0x00          ;/* Frame interval 3 */
 
         ; VS Color Matching Descriptor Descriptor
         .db 0x06                         ; (6 bytes)
@@ -340,99 +270,11 @@ vsheaderend:
         ;; EP6 Descriptor
         .db 0x07                         ;/* Descriptor size */
         .db DSCR_ENDPOINT_TYPE           ;/* Endpoint descriptor type */
-        .db 0x86                         ;/* Endpoint address and description */
-        .db ENDPOINT_TYPE_ISO            ;/* Bulk Endpoint */
+        .db 0x82                         ;/* Endpoint address and description */
+        .db ENDPOINT_TYPE_BULK            ;/* Bulk Endpoint */
         .db 0x00
         .db 0x04                         ;/* 1024 Bytes Maximum Packet Size. */
         .db 0x01                         ;/* Servicing interval for data transfers */
-
-
-        ;;;;;;;;;;;;;;;;;;;;;;;;;; CDC ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-        .db 0x08                         ; 0 bLength 1 Descriptor size in bytes (08h)
-        .db 0x0B                         ; 1 bDescriptorType 1 The constant Interface Association (0Bh)
-        .db 0x02                         ; 2 bFirstInterface 1 Number identifying the first interface associated with the function
-        .db 0x02                         ; 3 bInterfaceCount 1 The number of contiguous interfaces associated with the function
-        .db 0x02                         ; 4 bFunctionClass 1 Class code
-        .db 0x00                         ; 5 bFunctionSubClass 1 Subclass code
-        .db 0x01                         ; 6 bFunctionProtocol 1 Protocol code
-        .db 0x01                         ; 8 iFunction 1 Index of string descriptor for the function
-
-        .db DSCR_INTERFACE_LEN              ; Descriptor length
-        .db DSCR_INTERFACE_TYPE          ; Descriptor type
-        .db 0x02                         ; Zero-based index of this interface
-        .db 0x00                         ; Alternate setting
-        .db 0x01                         ; Number of end points
-        .db 0x02                         ; Interface class
-        .db 0x02                         ; Interface sub class
-        .db 0x01                         ; Interface protocol code class
-        .db 0x01                         ; Interface descriptor string index
-
-        ;; Header Functional Descriptor
-        .db 0x05                         ; Descriptor Size in Bytes (5)
-        .db 0x24                         ; CS_Interface
-        .db 0x00                         ; Header Functional Descriptor
-        .dw 0x1001                       ; bcdCDC
-
-        ;; Union Functional Descriptor
-        .db 0x05                         ; Descriptor Size in Bytes (5)
-        .db 0x24                         ; CS_Interface
-        .db 0x06                         ; Union Functional Descriptor
-        .db 0x02                         ; bMasterInterface
-        .db 0x03                         ; bSlaveInterface0
-
-        ;; CM Functional Descriptor
-        .db 0x05                         ; Descriptor Size in Bytes (5)
-        .db 0x24                         ; CS_Interface
-        .db 0x01                         ; CM Functional Descriptor
-        .db 0x00                         ; bmCapabilities
-        ; .db 0x03                         ; bmCapabilities
-        .db   0x03                       ; bDataInterface
-
-        ;; ACM Functional Descriptor
-        .db 0x04                         ; Descriptor Size in Bytes (5)
-        .db 0x24                         ; CS_Interface
-        .db 0x02                         ; Abstarct Control Management Functional Desc
-        .db 0x02                         ; bmCapabilities
-        ; .db 0x07                         ; bmCapabilities
-
-        ;; EP1 Descriptor
-        .db DSCR_ENDPOINT_LEN              ; Descriptor length
-        .db DSCR_ENDPOINT_TYPE           ; Descriptor type
-        .db 0x81                         ; Endpoint number, and direction
-        .db ENDPOINT_TYPE_INT            ; Endpoint type
-        .db 0x10                         ; Maximum packet size (LSB)
-        .db 0x00                         ; Max packet size (MSB)
-        .db 0x40                         ; Polling interval
-
-        ;; Virtual COM Port Data Interface Descriptor
-        .db DSCR_INTERFACE_LEN              ; Descriptor length
-        .db DSCR_INTERFACE_TYPE          ; Descriptor type
-        .db 3                            ; Zero-based index of this interface
-        .db 0                            ; Alternate setting
-        .db 2                            ; Number of end points
-        .db 0x0A                         ; Interface class
-        .db 0x00                         ; Interface sub class
-        .db 0x00                         ; Interface protocol code class
-        .db 1                            ; Interface descriptor string index
-
-        ;; EP2OUT Descriptor
-        .db DSCR_ENDPOINT_LEN              ; Descriptor length
-        .db DSCR_ENDPOINT_TYPE           ; Descriptor type
-        .db 0x02                         ; Endpoint number, and direction
-        .db ENDPOINT_TYPE_BULK           ; Endpoint type
-        .db 0x00                         ; Maximum packet size (LSB)
-        .db 0x02                         ; Max packet size (MSB)
-        .db 0x00                         ; Polling interval
-
-        ;; EP4 Descriptor
-        .db DSCR_ENDPOINT_LEN              ; Descriptor length
-        .db DSCR_ENDPOINT_TYPE           ; Descriptor type
-        .db 0x84                         ; Endpoint number, and direction
-        .db ENDPOINT_TYPE_BULK           ; Endpoint type
-        .db 0x00                         ; Maximum packet size (LSB)
-        .db 0x02                         ; Max packet size (MSB)
-        .db 0x00                         ; Polling interval
 
 highspd_dscr_realend:
 

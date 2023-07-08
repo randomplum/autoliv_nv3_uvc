@@ -13,7 +13,7 @@
 //#define UVC_GET_RES                                     (0x84)
 //#define UVC_GET_LEN                                     (0x85)
 //#define UVC_GET_INFO                                    (0x86)
-//#define UVC_GET_DEF                                     (0x87)
+#define UVC_GET_DEF                                     (0x87)
 
 
 

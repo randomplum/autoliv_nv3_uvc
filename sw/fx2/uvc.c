@@ -91,7 +91,12 @@ BOOL handleUVCCommand(BYTE cmd)
         // case UVC_GET_LEN:
         // case UVC_GET_INFO:
 
-        // case UVC_GET_DEF:
+        case UVC_GET_DEF:
+            EP0BUF[0] = 0x01;
+            EP0BCH = 0x00;
+            SYNCDELAY;
+            EP0BCL = 1;
+            return TRUE;
         // FIXME: Missing this case causes the following errors
         // uvcvideo: UVC non compliance - GET_DEF(PROBE) not supported. Enabling workaround.
         // Unhandled Vendor Command: 87
