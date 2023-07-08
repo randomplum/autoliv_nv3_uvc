@@ -16,22 +16,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  **/
 
-#ifdef DEBUG 
-#include "softserial.h"
-#include <stdio.h>
-#define putchar soft_putchar
-#define getchar soft_getchar
-#else
 #define printf(...)
-#endif
 
 #include <fx2macros.h>
 #include <fx2ints.h>
 #include <autovector.h>
 #include <delay.h>
 #include <setupdat.h>
-
-#include "cdc.h"
 
 #define SYNCDELAY SYNCDELAY4
 
@@ -45,20 +36,14 @@ extern void main_init();
 
 void main() {
 
-#ifdef DEBUG
- SETCPUFREQ(CLK_48M); // required for sio0_init 
- // main_init can still set this to whatever you want.
- soft_sio0_init(57600); // needed for printf if debug defined
-#endif
-
  main_init();
 
  // set up interrupts.
  USE_USB_INTS();
- 
+
  ENABLE_SUDAV();
  ENABLE_USBRESET();
- ENABLE_HISPEED(); 
+ ENABLE_HISPEED();
  ENABLE_SUSPEND();
  ENABLE_RESUME();
 
@@ -71,7 +56,7 @@ void main() {
 #else
  USBCS &= ~bmDISCON;
 #endif
- 
+
  while(TRUE) {
 
      main_loop();
@@ -119,7 +104,7 @@ void main() {
 void resume_isr() __interrupt RESUME_ISR {
  CLEAR_RESUME();
 }
-  
+
 void sudav_isr() __interrupt SUDAV_ISR {
  dosud=TRUE;
  CLEAR_SUDAV();
@@ -140,20 +125,6 @@ void suspend_isr() __interrupt SUSPEND_ISR {
 
 
 void ISR_USART0(void) __interrupt 4 __critical {
-	if (RI) {
-		RI=0;
-		if (!cdc_can_send()) {
-			// Mark overflow
-		} else {
-			cdc_queue_data(SBUF0);
-		}
-		// FIXME: Should use a timer, rather then sending one byte at a
-		// time.
-		cdc_send_queued_data();
-	}
-	if (TI) {
-		TI=0;
-//		transmit();
-	}
+
 }
 

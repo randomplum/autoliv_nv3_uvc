@@ -17,8 +17,6 @@
 #include <delay.h>
 #define SYNCDELAY SYNCDELAY4
 
-#include "cdc-config.h"
-
 BYTE valuesArray[26]=
 {
     0x01,0x00,                       /* bmHint : No fixed parameters */
@@ -130,20 +128,6 @@ BOOL handle_get_interface(BYTE ifc, BYTE* alt_ifc)
 BOOL handle_set_interface(BYTE ifc, BYTE alt_ifc)
 {
     AlternateSetting = SETUPDAT[2];
-
-	if (ifc==0&&alt_ifc==0) {
-		// SEE TRM 2.3.7
-		// reset toggles
-		CDC_H2D_RESET(TOGGLE);
-		CDC_D2H_RESET(TOGGLE);
-		// restore endpoints to default condition
-		CDC_H2D_RESET(FIFO);
-		CDC_H2D_EP(BCL)=0x80;
-		SYNCDELAY;
-		CDC_H2D_EP(BCL)=0X80;
-		SYNCDELAY;
-		CDC_D2H_RESET(FIFO);
-	}
 
     if (AlternateSetting == 1) {
         // reset UVC fifo

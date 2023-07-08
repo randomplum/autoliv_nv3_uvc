@@ -36,7 +36,7 @@ FX2LIBDIR := ./fx2lib
 COMMON_DIR := ./
 USE_16K := 1
 
-CC_SRCS := app.c cdc.c debug.c softserial.c uvc.c firmware.c read-serialno.c to-uart.c
+CC_SRCS := app.c uvc.c firmware.c read-serialno.c
 AS_SRCS := descriptors_hdmi2usb.a51
 
 include $(COMMON_DIR)/common.mk
