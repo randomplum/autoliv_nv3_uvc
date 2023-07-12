@@ -235,8 +235,8 @@ vsheader:
         .db 0x05                         ;/* Descriptor subtype uncompressed frame I/F  */
         .db 0x01                         ;/* Frame descriptor index */
         .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x02                    ;/* Width of the frame : 512 */
-        .db 0x00,0x02                    ;/* Height of the frame : 512 */
+        .db 0x00,0x01                    ;/* Width of the frame : 256 */
+        .db 0x00,0x01                    ;/* Height of the frame : 256 */
         .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
         .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
         .db 0x00,0x00,0x18,0x00          ;/* Maximum video or still frame size in bytes */
@@ -271,7 +271,7 @@ vsheaderend:
         .db 0x07                         ;/* Descriptor size */
         .db DSCR_ENDPOINT_TYPE           ;/* Endpoint descriptor type */
         .db 0x82                         ;/* Endpoint address and description */
-        .db ENDPOINT_TYPE_BULK            ;/* Bulk Endpoint */
+        .db ENDPOINT_TYPE_ISO            ;/* Bulk Endpoint */
         .db 0x00
         .db 0x04                         ;/* 1024 Bytes Maximum Packet Size. */
         .db 0x01                         ;/* Servicing interval for data transfers */

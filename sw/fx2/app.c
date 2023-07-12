@@ -161,7 +161,7 @@ void TD_Init(void)             // Called once at startup
      */
 
     // Used by the video data
-	SYNCDELAY; EP2CFG = 0xEA;  // Activate, IN  Direction, BULK  Type, 1024 bytes Size, Double buffered
+	SYNCDELAY; EP2CFG = 0xDA;  // Activate, IN  Direction, BULK  Type, 1024 bytes Size, Double buffered
 	SYNCDELAY; EP4CFG = 0x00;  // Disable Endpoint 4
 	SYNCDELAY; EP6CFG = 0x00;  // Disable Endpoint 6
 	SYNCDELAY; EP8CFG = 0x00;  // Disable Endpoint 8
