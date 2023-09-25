@@ -2,18 +2,40 @@
 from amaranth.sim import Simulator
 from fifo_test import FIFOTest
 
-
 dut = FIFOTest()
 def bench():
     # Disabled counter should not overflow.
+
+    def w(d):
+        yield dut.data_out_fifo.w_data.eq(d << 6)
+        yield dut.data_out_fifo.w_en.eq(1)
+        yield
+        yield dut.data_out_fifo.w_en.eq(0)
+
     yield dut.full.eq(1)
-    for _ in range(4086):
+    for _ in range(336):
+        yield
+    for _ in range(336):
+        yield from w(0x55)
+    for _ in range(336):
+        yield
+    for _ in range(336):
+        yield from w(0x55)
+    for _ in range(336):
+        yield
+    for _ in range(336):
+        yield from w(0x55)
+    for _ in range(336):
+        yield
+    for _ in range(336):
+        yield from w(0x55)
+    for _ in range(336):
         yield
     yield dut.full.eq(0)
     for _ in range(10):
         yield
     yield dut.full.eq(1)
-    for _ in range(256*4086):
+    for _ in range(4086):
         yield
 
 

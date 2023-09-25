@@ -393,6 +393,7 @@ class FIFOTest(Elaboratable):
         self.empty = Signal()
         self.leds = Signal(8)
         self.clk_i = Signal()
+        self.data_out_fifo = SyncFIFO(width=14, depth=32)
         self.pads = pads
 
     def elaborate(self, platform):
@@ -411,7 +412,7 @@ class FIFOTest(Elaboratable):
         m.domains += ClockDomain("sync")
         m.d.comb += ClockSignal("sync").eq(clk_pll)
 
-        m.domains.fifo = ClockDomain("fifo", clk_edge="neg", async_reset=True)
+        m.domains.fifo = ClockDomain("fifo", clk_edge="neg")
         m.d.comb += ClockSignal("fifo").eq(clk_pll)
 
         byte_cnt = Signal(range(1025))
@@ -426,10 +427,9 @@ class FIFOTest(Elaboratable):
         m.d.comb += self.sloe.eq(1)
         m.d.comb += self.slrd.eq(1)
 
-        # data_out_fifo = SyncFIFO(width=14, depth=64)
-        # m.submodules += data_out_fifo
+        m.submodules += self.data_out_fifo
         # m.submodules += ISC0901B0Main(
-        #     pads=self.pads, data_out_fifo=data_out_fifo)
+        #     pads=self.pads, data_out_fifo=self.data_out_fifo)
 
         with m.FSM():
             with m.State("INIT"):
@@ -445,8 +445,9 @@ class FIFOTest(Elaboratable):
                 m.d.sync += self.leds.eq(0x02)
                 m.d.sync += self.data.eq(0x02)
                 m.d.sync += byte_cnt.eq(byte_cnt + 1)
-                m.d.sync += self.slwr.eq(0)
-                m.next = "START_PACKET_LEN_LATCH"
+                with m.If(self.data_out_fifo.r_level > 1):
+                    m.d.sync += self.slwr.eq(0)
+                    m.next = "START_PACKET_LEN_LATCH"
             with m.State("START_PACKET_LEN_LATCH"):
                 m.next = "START_PACKET_HEADER"
             with m.State("START_PACKET_HEADER"):
@@ -454,13 +455,15 @@ class FIFOTest(Elaboratable):
                 m.d.sync += byte_cnt.eq(byte_cnt + 1)
                 m.next = "START_PACKET_HEADER_LATCH"
             with m.State("START_PACKET_HEADER_LATCH"):
+                m.d.sync += self.data_out_fifo.r_en.eq(1)
                 m.next = "DATA_Y0"
             with m.State("DATA_Y0"):
                 m.d.sync += self.slwr.eq(0)
                 m.d.sync += self.leds.eq(0x04)
                 m.d.sync += byte_cnt.eq(byte_cnt + 1)
-                m.d.sync += self.data.eq((pixel_cnt % 32) + 200)
-                m.next =  "DATA_Y0_LATCH"
+                m.d.sync += self.data.eq(self.data_out_fifo.r_data[-8:])
+                m.d.sync += self.data_out_fifo.r_en.eq(0)
+                m.next = "DATA_Y0_LATCH"
             with m.State("DATA_Y0_LATCH"):
                 m.next = "DATA_U0"
             with m.State("DATA_U0"):
@@ -468,14 +471,16 @@ class FIFOTest(Elaboratable):
                 m.d.sync += byte_cnt.eq(byte_cnt + 1)
                 m.d.sync += pixel_cnt.eq(pixel_cnt + 1)
                 m.d.sync += self.data.eq(0x80)
-                m.next =  "DATA_U0_LATCH"
+                m.next = "DATA_U0_LATCH"
             with m.State("DATA_U0_LATCH"):
+                m.d.sync += self.data_out_fifo.r_en.eq(1)
                 m.next = "DATA_Y1"
             with m.State("DATA_Y1"):
                 m.d.sync += self.leds.eq(0x04)
                 m.d.sync += byte_cnt.eq(byte_cnt + 1)
-                m.d.sync += self.data.eq((pixel_cnt % 32) + 200)
-                m.next =  "DATA_Y1_LATCH"
+                m.d.sync += self.data.eq(self.data_out_fifo.r_data[-8:])
+                m.d.sync += self.data_out_fifo.r_en.eq(0)
+                m.next = "DATA_Y1_LATCH"
             with m.State("DATA_Y1_LATCH"):
                 m.next = "DATA_V0"
             with m.State("DATA_V0"):
@@ -485,13 +490,17 @@ class FIFOTest(Elaboratable):
                 m.d.sync += pixel_cnt.eq(pixel_cnt + 1)
                 m.next = "NEXT"
             with m.State("NEXT"):
-                m.d.sync += self.leds.eq(0x80)
-                with m.If((pixel_cnt == frame_size) | (max_pkt - byte_cnt == 2)):
-                        m.next = "START_PACKET"
-                        m.d.sync += byte_cnt.eq(0)
-                        m.d.sync += self.pktend.eq(0)
+                m.d.sync += self.leds.eq(0x08)
+                with m.If((pixel_cnt == frame_size)
+                          | (max_pkt - byte_cnt == 2)):
+                    m.d.sync += byte_cnt.eq(0)
+                    m.d.sync += self.pktend.eq(0)
+                    m.next = "START_PACKET"
                 with m.Else():
-                    m.next = "DATA_Y0"
+                    with m.If(self.data_out_fifo.r_level > 1):
+                        m.next = "DATA_Y0"
+                    with m.Else():
+                        m.d.sync += self.slwr.eq(1)
             with m.State("START_PACKET"):
                 m.d.sync += self.leds.eq(0x10)
                 m.d.sync += self.slwr.eq(1)
@@ -504,8 +513,9 @@ class FIFOTest(Elaboratable):
                     m.d.sync += eof.eq(0)
                     m.d.sync += fid.eq(~fid)
                     m.d.sync += self.leds.eq(0x20)
-                    m.next = "START_PACKET_LATCH"
+                m.next = "START_PACKET_LATCH"
             with m.State("START_PACKET_LATCH"):
+                m.d.sync += self.leds.eq(0x20)
                 m.d.sync += self.pktend.eq(1)
                 with m.If(self.full == 1):
                     m.next = "START_PACKET_LEN"
