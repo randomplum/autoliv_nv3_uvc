@@ -18,7 +18,8 @@ def bench():
 
 
 sim = Simulator(dut)
-sim.add_clock(1e-6) # 1 MHz
+sim.add_clock(1e-6, domain="sync") # 1 MHz
+sim.add_clock(1e-6, domain="fifo") # 1 MHz
 sim.add_sync_process(bench)
 with sim.write_vcd("sim.vcd"):
     sim.run()
