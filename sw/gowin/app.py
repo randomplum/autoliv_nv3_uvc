@@ -6,7 +6,6 @@ from board.thermalcam import ThermalCamPlatform
 from fifo_test import FIFOTest
 
 board = ThermalCamPlatform()
-dut = FIFOTest()
 
 
 def get_all_resources(name):
@@ -21,7 +20,9 @@ def get_all_resources(name):
 
 leds = [res.o for res in get_all_resources("led")]
 fifo = board.request("fifo", 0)
-uart = board.request("uart", 0)
+clk_i = board.request("clk25", 0)
+pads = board.request("nv3", 0)
+dut = FIFOTest(pads)
 dut.data = fifo.data
 dut.addr = fifo.addr
 dut.clk_out = fifo.clk_out
@@ -31,7 +32,7 @@ dut.slwr = fifo.slwr
 dut.pktend = fifo.pktend
 dut.full = fifo.full
 dut.empty = fifo.empty
-dut.uart_tx = uart.tx
+dut.clk_i = clk_i.i
 dut.leds = Cat(leds)
-# board.build(dut, do_program=True)
-board.build(dut, do_program=False)
+board.build(dut, do_program=True)
+#board.build(dut, do_program=False)

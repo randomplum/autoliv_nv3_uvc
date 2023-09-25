@@ -51,10 +51,28 @@ def FIFOResource(*args, data, clk_out, addr, sloe, slrd, slwr, pktend, full,
     return Resource.family(*args, default_name="fifo", ios=io)
 
 
+def NV3Resource(*args, clk, cmd, ena, bias, data_even, data_odd, attrs=None,
+                con=None):
+
+    io = []
+    io.append(Subsignal("clk_t", Pins(clk, dir="o", conn=con, assert_width=1)))
+    io.append(Subsignal("cmd_t", Pins(cmd, dir="o", conn=con, assert_width=1)))
+    io.append(Subsignal("ena_t", Pins(ena, dir="o", conn=con, assert_width=1)))
+    io.append(Subsignal("bias_t", Pins(bias, dir="o", conn=con,
+                        assert_width=1)))
+    io.append(Subsignal("data_even_t", Pins(
+        data_even, dir="io", conn=con, assert_width=1)))
+    io.append(Subsignal("data_odd_t", Pins(
+        data_odd, dir="io", conn=con, assert_width=1)))
+    if attrs is not None:
+        io.append(attrs)
+    return Resource.family(*args, default_name="nv3", ios=io)
+
+
 class ThermalCamPlatform(GowinPlatform):
     part = "GW1NR-UV9QN88PC6/I5"
     family = "GW1NR-9"
-    default_clk = "clk25"
+    # default_clk = "clk25"
     resources = [
         Resource("clk25", 0, Pins("52", dir="i"),
                  Clock(25e6), Attrs(IO_TYPE="LVCMOS25")),
@@ -78,6 +96,8 @@ class ThermalCamPlatform(GowinPlatform):
                      rwds="IOL17A", ck="IOL8A", ck_n="IOL7A", cs_n="IOL6B",
                      reset_n="IOL2A", attrs=Attrs(IO_TYPE="LVCMOS18")
                      ),
+        NV3Resource(0, clk="60", cmd="62", ena="63", bias="61", data_even="59",
+                    data_odd="57"),
 
     ]
     connectors = [
