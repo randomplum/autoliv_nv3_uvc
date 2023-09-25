@@ -235,7 +235,7 @@ vsheader:
         .db 0x05                         ;/* Descriptor subtype uncompressed frame I/F  */
         .db 0x01                         ;/* Frame descriptor index */
         .db 0x02                         ;/* Still image capture method not supported */
-        .db 0x00,0x01                    ;/* Width of the frame : 256 */
+        .db 0x50,0x01                    ;/* Width of the frame : 336 */
         .db 0x00,0x01                    ;/* Height of the frame : 256 */
         .db 0x00,0x00,0x00,0x0E          ;/* Min bit rate bits/s */
         .db 0x00,0x00,0x00,0x0E          ;/* max bit rate bits/s */
